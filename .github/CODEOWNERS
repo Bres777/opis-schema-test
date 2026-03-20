@@ -1,0 +1,8 @@
+# CODEOWNERS for opis-schema-test
+# Each line is a file pattern followed by one or more owners
+
+# Default owner for everything in the repo
+* @Bres777
+
+# Workflow files owned by maintainer
+.github/ @Bres777
