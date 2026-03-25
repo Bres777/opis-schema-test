@@ -1,0 +1,34 @@
+name: Manual Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+      debug:
+        description: 'Enable debug mode'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy info
+        run: |
+          echo "Deploying to ${{ github.event.inputs.environment }}"
+          echo "Debug: ${{ github.event.inputs.debug }}"
+          echo "Triggered by: ${{ github.actor }}"
+
+      - name: Deploy
+        run: echo "Deployment to ${{ github.event.inputs.environment }} complete"
