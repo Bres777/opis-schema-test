@@ -1,0 +1,39 @@
+name: 'Build and Test'
+description: 'Composite action for building and testing'
+
+inputs:
+  node-version:
+    description: 'Node.js version'
+    required: false
+    default: '18'
+
+outputs:
+  test-results:
+    description: 'Test results summary'
+    value: ${{ steps.test.outputs.summary }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Install dependencies
+      run: npm ci
+      shell: bash
+
+    - name: Build
+      run: npm run build
+      shell: bash
+
+    - id: test
+      name: Run tests
+      run: |
+        npm test
+        echo "summary=All tests passed" >> $GITHUB_OUTPUT
+      shell: bash
