@@ -1,0 +1,43 @@
+name: 'Lint and Format'
+description: 'Custom action to lint and format code'
+
+inputs:
+  node-version:
+    description: 'Node.js version to use'
+    required: false
+    default: '18'
+  fix:
+    description: 'Auto-fix lint issues'
+    required: false
+    default: 'false'
+
+outputs:
+  lint-result:
+    description: 'Lint check result'
+    value: ${{ steps.lint.outputs.result }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Install dependencies
+      run: npm ci
+      shell: bash
+
+    - id: lint
+      name: Run linter
+      run: |
+        if [ "${{ inputs.fix }}" = "true" ]; then
+          npx eslint . --fix 2>&1 && echo "result=pass" >> $GITHUB_OUTPUT
+        else
+          npx eslint . 2>&1 && echo "result=pass" >> $GITHUB_OUTPUT
+        fi
+      shell: bash
+
+    - name: Format check
+      run: npx prettier --check .
+      shell: bash
